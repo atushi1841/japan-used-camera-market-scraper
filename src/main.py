@@ -37,7 +37,10 @@ async def run(actor_input, actor=None):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
     }
 
-    async with httpx.AsyncClient(proxy=proxy_url, headers=headers, timeout=30.0) as client:
+    # キタムラAPIはApifyプロキシ(海外DC IP)を403ブロックするため、プロキシなしでアクセスする
+    # フジヤはSSRページのためプロキシ使用OK
+    async with httpx.AsyncClient(proxy=None, headers=headers, timeout=30.0) as client_direct, \
+               httpx.AsyncClient(proxy=proxy_url, headers=headers, timeout=30.0) as client_proxy:
         collected = 0
         for src in sources:
             if collected >= max_items:
@@ -46,10 +49,10 @@ async def run(actor_input, actor=None):
             items = []
             if src == "kitamura":
                 from sources.kitamura import fetch_kitamura
-                items = await fetch_kitamura(client, keyword=search_keyword, max_pages=max_pages, max_items=remaining)
+                items = await fetch_kitamura(client_direct, keyword=search_keyword, max_pages=max_pages, max_items=remaining)
             elif src == "fujiya":
                 from sources.fujiya import fetch_fujiya
-                items = await fetch_fujiya(client, keyword=search_keyword, max_pages=max_pages, max_items=remaining)
+                items = await fetch_fujiya(client_proxy, keyword=search_keyword, max_pages=max_pages, max_items=remaining)
 
             for item in items:
                 if actor is not None:
