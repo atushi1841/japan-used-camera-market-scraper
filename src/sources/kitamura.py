@@ -5,6 +5,13 @@ import httpx
 
 API_URL = "https://shop.kitamura.jp/ec/api/cache/s/v1/used_sell_search"
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36",
+    "Referer": "https://shop.kitamura.jp/ec/ct/used/list",
+    "X-Requested-With": "XMLHttpRequest",
+    "Accept": "application/json, text/plain, */*",
+}
+
 async def fetch_kitamura(client, keyword="", max_pages=2, max_items=100):
     results = []
     offset = 1
@@ -25,7 +32,7 @@ async def fetch_kitamura(client, keyword="", max_pages=2, max_items=100):
         if keyword:
             params["query"] = keyword
 
-        resp = await client.get(API_URL, params=params)
+        resp = await client.get(API_URL, params=params, headers=HEADERS)
         if resp.status_code != 200:
             print(f"[kitamura] HTTP {resp.status_code}: {resp.text[:200]}")
             break
