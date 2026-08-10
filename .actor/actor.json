@@ -6,21 +6,5 @@
   "buildTag": "latest",
   "dockerfile": "./Dockerfile",
   "readme": "./README.md",
-  "input": "./.actor/INPUT_SCHEMA.json",
-  "output": {
-    "actorSpecification": 1,
-    "fields": [
-      {"key": "productId", "type": "string", "description": "Product ID at the source shop"},
-      {"key": "title", "type": "string", "description": "Product title"},
-      {"key": "price", "type": "integer", "description": "Price in JPY"},
-      {"key": "brand", "type": "string", "description": "Brand / maker"},
-      {"key": "shop", "type": "string", "description": "Source shop name"},
-      {"key": "category", "type": "string", "description": "Category label"},
-      {"key": "condition", "type": "string", "description": "Condition (中古 for used)"},
-      {"key": "source", "type": "string", "description": "Source marketplace: kitamura | fujiya"},
-      {"key": "imageUrl", "type": "string", "description": "Product image URL"},
-      {"key": "productUrl", "type": "string", "description": "Product page URL"},
-      {"key": "scrapedAt", "type": "string", "description": "Scrape timestamp (ISO 8601)"}
-    ]
-  }
+  "input": "./.actor/INPUT_SCHEMA.json"
 }
