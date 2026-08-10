@@ -63,6 +63,10 @@ The `source` + `shop` fields let you compare the same model across shops: run on
 ## Pricing
 
 Pay per event — $0.00005/run + **$0.002/item**.
+## Integrations
+
+Works with Apify [Connectors](https://apify.com/integrations) — push results to Slack, Google Sheets, Notion, Supabase, or GitHub with one click (no code needed). Trigger on a [Schedule](https://apify.com/docs/schedules) for daily price monitoring.
+
 
 ## Data source notes
 
