@@ -26,7 +26,17 @@ async def fetch_kitamura(client, keyword="", max_pages=2, max_items=100):
             params["query"] = keyword
 
         resp = await client.get(API_URL, params=params)
-        data = resp.json()
+        if resp.status_code != 200:
+            print(f"[kitamura] HTTP {resp.status_code}: {resp.text[:200]}")
+            break
+        if not resp.text.strip():
+            print("[kitamura] 空レスポンス")
+            break
+        try:
+            data = resp.json()
+        except Exception as e:
+            print(f"[kitamura] JSONパース失敗: {resp.text[:300]}")
+            raise
         hits = (data.get("search") or {}).get("hits") or []
         if not hits:
             break
