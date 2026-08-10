@@ -36,6 +36,30 @@ Scrapes listings from **Kitamura (キタムラ)** — Japan's biggest used-camer
 | `productUrl` | Product page URL |
 | `scrapedAt` | Scrape timestamp |
 
+## Output sample
+
+```json
+{
+  "productId": "2445650064817",
+  "title": "ソニー α7III ボディ [ILCE-7M3]",
+  "price": 130600,
+  "brand": "ソニー",
+  "shop": "東京・二子玉川店",
+  "category": [
+    "ミラーレス一眼:メーカーで選ぶ:ソニー",
+    "ミラーレス一眼:センサーサイズで選ぶ:フルサイズ以上",
+    "ミラーレス一眼:本体質量で選ぶ:300g～"
+  ],
+  "imageUrl": "https://nc-img.kitamura.jp/2445650064817-1-1.jpg",
+  "productUrl": "https://shop.kitamura.jp/ec/prd/2445650064817",
+  "condition": "",
+  "source": "kitamura",
+  "scrapedAt": "2026-08-10T09:54:24.973364+00:00"
+}
+```
+
+The `source` + `shop` fields let you compare the same model across shops: run once with `searchKeyword: "α7"` and get Kitamura and Fujiya prices side by side.
+
 ## Pricing
 
 Pay per event — $0.00005/run + **$0.002/item**.
