@@ -35,6 +35,7 @@
       "title": "Proxy設定",
       "type": "object",
       "editor": "proxy",
+      "description": "Apifyプロキシ設定（自動）",
       "default": {
         "useApifyProxy": true
       }
