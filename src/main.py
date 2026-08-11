@@ -1,7 +1,12 @@
 import asyncio
 import json
 import sys
+import datetime
+import unicodedata
 import httpx
+
+def _norm_key(text):
+    return unicodedata.normalize("NFC", text).casefold()
 
 try:
     from apify import Actor
@@ -26,6 +31,8 @@ async def run(actor_input, actor=None):
     max_items = int(actor_input.get("maxItems", 100))
     max_pages = int(actor_input.get("maxPages", 2))
     sources = [s.strip() for s in actor_input.get("sources", "kitamura,fujiya").split(",") if s.strip()]
+    stats_mode = actor_input.get("statsMode", False)
+    collected_items = []
 
     proxy_url = None
     if actor is not None:
@@ -55,13 +62,72 @@ async def run(actor_input, actor=None):
                 items = await fetch_fujiya(client_proxy, keyword=search_keyword, max_pages=max_pages, max_items=remaining)
 
             for item in items:
-                if actor is not None:
-                    await actor.push_data(item)
+                if stats_mode:
+                    collected_items.append(item)
                 else:
-                    print(json.dumps(item, ensure_ascii=False))
+                    if actor is not None:
+                        await actor.push_data(item)
+                    else:
+                        print(json.dumps(item, ensure_ascii=False))
                 collected += 1
                 if collected >= max_items:
                     break
+
+        if stats_mode:
+            stats_keyword = actor_input.get("statsKeyword") or ""
+            filtered_items = collected_items
+            if stats_keyword:
+                nk = _norm_key(stats_keyword)
+                filtered_items = [it for it in collected_items if nk in _norm_key(it.get("title", ""))]
+            prices = []
+            for it in filtered_items:
+                try:
+                    p = int(it.get("price", 0))
+                except (TypeError, ValueError):
+                    continue
+                if p > 0:
+                    prices.append(p)
+            count = len(prices)
+            if count == 0:
+                price_min = 0
+                price_max = 0
+                price_avg = 0
+                price_median = 0
+                sample = []
+            else:
+                price_min = min(prices)
+                price_max = max(prices)
+                price_avg = int(sum(prices) / count)
+                sorted_prices = sorted(prices)
+                mid = count // 2
+                if count % 2 == 0:
+                    price_median = int((sorted_prices[mid - 1] + sorted_prices[mid]) / 2)
+                else:
+                    price_median = sorted_prices[mid]
+                sample = []
+                for it in filtered_items[:3]:
+                    sample.append({
+                        "title": it.get("title", ""),
+                        "price": it.get("price", 0),
+                        "detailUrl": it.get("detailUrl", ""),
+                        "shop": it.get("shop", "")
+                    })
+            stats_result = {
+                "statsType": "japan-camera-price",
+                "keyword": stats_keyword if stats_keyword else search_keyword,
+                "count": count,
+                "priceMin": price_min,
+                "priceMax": price_max,
+                "priceAvg": price_avg,
+                "priceMedian": price_median,
+                "sampleItems": sample,
+                "collectedAt": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+            }
+            if actor is not None:
+                await actor.push_data(stats_result)
+            else:
+                print(json.dumps(stats_result, ensure_ascii=False))
+            return
 
 if __name__ == "__main__":
     asyncio.run(main())
