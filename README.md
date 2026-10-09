@@ -1,5 +1,7 @@
 # Japan Used Camera Market — Cross-Shop Price Comparison
 
+[![Apify Store](https://img.shields.io/badge/Apify-Store-blue)](https://apify.com/fruitful_quintessence/japan-used-camera-market-scraper)
+
 **Compare used camera & lens prices across Japan's largest used-camera retailers in a single dataset.**
 
 Scrapes listings from **Kitamura (キタムラ)** — Japan's biggest used-camera chain (300+ stores) — and **Fujiya Camera (フジヤカメラ)** — Tokyo's legendary used-camera specialist (since 1938). Each item is tagged with its `source` and `shop` so you can compare prices for the same model across shops.
